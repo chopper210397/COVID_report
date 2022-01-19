@@ -1,6 +1,6 @@
 ---
 title: "Situación actual COVID"
-author: "Luis Barrios"
+author: "Lansier"
 output: pdf_document
 ---
 
