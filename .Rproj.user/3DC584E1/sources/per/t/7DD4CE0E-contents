@@ -1,0 +1,145 @@
+---
+title: "Situación actual COVID"
+author: "Lansier"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(writexl)
+library(RODBC)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(ggplot2)
+library(fpp2)
+library(sf)
+library(sp)
+#--------------------- DATA COVID DEL MINSA ---------------------#
+# datacovid<-read.csv("C:\\Users\\LBarrios\\Downloads\\positivos_covid.csv", sep = ";")
+# FORMATEANDO LA FECHA
+datacovid<-read.csv(url("https://cloud.minsa.gob.pe/s/AC2adyLkHCKjmfm/download"), sep = ";")
+fallecidoscovid<-read.csv(url("https://cloud.minsa.gob.pe/s/xJ2LQ3QyRW38Pe5/download"), sep = ";")
+
+# fallecidoscovid<-read.csv("C:\\Users\\LBarrios\\Downloads\\fallecidos_covid.csv",sep=";")
+datacovid$FECHA_RESULTADO<-as.Date.character(datacovid$FECHA_RESULTADO,format = "%Y%m%d")
+fallecidoscovid$FECHA_FALLECIMIENTO<-as.Date.character(fallecidoscovid$FECHA_FALLECIMIENTO,format = "%Y%m%d")
+deathsbymonth<-fallecidoscovid %>% filter(DEPARTAMENTO=="LIMA") %>% group_by(FECHA_FALLECIMIENTO) %>%
+  summarise(n=n())
+
+```
+## Introducción
+El presente documento se realiza con fines informativos sobre la situación actual de la pandemia en el país a fin de concientizar sobre el peligro y/o posibles efectos tanto en Lansier como en la economía en general, los datos fueron obtenidos del repositorio de datos covid del MINSA.
+
+## Histórico de casos covid en Lima
+Como se puede observar estamos en la etapa creciente de la "tercera ola", en esta ocasión el número de contagiados ha sobrepasado largamente al pico de anteriores periodos, esto debido a la nueva variante OMICRON entre otros posibles factores.
+```{r covid, echo=FALSE, fig.asp=0.6, message=FALSE, warning=FALSE,out.width = "90%",fig.align='center'}
+# graficando toda la data covid para LIMA
+datacovid %>%
+  filter(DEPARTAMENTO=="LIMA") %>%
+  group_by(FECHA_RESULTADO) %>% 
+  summarise(n=n()) %>%
+  ggplot(mapping = aes(x=FECHA_RESULTADO,y=n))+
+  geom_line(color="red") +
+  theme_minimal()+
+  labs(x="",y="Número de casos",
+       title = "Número de nuevos infectados por día en el departamento de Lima",
+       caption = "Fuente: Elaboración propia")
+
+
+```
+\newpage
+A diferencia de los contagios, los fallecimientos no han subido durante la tercera ola.
+```{r fallecimientos,echo=FALSE, fig.asp=0.6, message=FALSE, warning=FALSE,out.width = "90%",fig.align='center'}
+deathsbymonth %>%
+  ggplot(mapping = aes(x=FECHA_FALLECIMIENTO,y=n))+
+  geom_line(color="black") +
+  theme_minimal()+
+  labs(x="",y="Número de fallecimientos",
+       title = "Número de fallecimientos por día en el departamento de Lima",
+       caption = "Fuente: Elaboración propia")
+```
+
+## Tendencia reciente de casos covid
+En el siguiente gráfico se puede apreciar la tendencia de los casos confirmados durante las últimas tres semanas, aproximadamente desde el 26 de diciembre comienza a escalar el virus nuevamente.
+
+```{r total, echo=FALSE, fig.asp=0.6, message=FALSE, warning=FALSE, paged.print=TRUE,out.width = "70%",fig.align='center'}
+# graficando data covid desde una fecha
+data1<-datacovid %>%
+  filter(DEPARTAMENTO=="LIMA" & FECHA_RESULTADO>"2021-12-22") %>% group_by(FECHA_RESULTADO) %>% 
+  summarise(n=n()) 
+#grafico
+data1 %>% ggplot(mapping = aes(x=FECHA_RESULTADO,y=n))+
+  geom_line(color="red")+
+  theme_minimal()+
+  labs(x="",y="Número de casos por día",
+       title = "Número de nuevos infectados por día en el departamento de Lima",
+       caption = "Fuente: Elaboración propia")
+```
+
+\newpage
+## Mapa Covid Enero 2022
+El siguiente mapa representa el numero de casos covid por departamento en el mes de Enero, un color más cercano al negro representa un mayor número de contagiados, y viceversa, colores cercanos al blanco significan contagios cercanos a cero, es notorio que la diferencia de casos contagiados confirmados por dia entre Lima y los demás departamentos es abismal, pero este puede ser un resultado sesgado dado que no se esta tomando en cuenta que Lima tambien posee una cantidad de habitantes sumamente superior a los demás departamentos.
+```{r dataworking, include=FALSE}
+# GENERANDO MAPA COVID POR DEPARTAMENTOS de todo el periodo
+peru_d <- st_read("C:/Users/LBarrios/Downloads/MAPA/dp.shp")
+data2<-datacovid %>% filter(FECHA_RESULTADO>"2021-12-31") %>% group_by(DEPARTAMENTO) %>% summarise(n=n())
+names(data2)[1]="NOMBDEP"
+
+peru_datos<-peru_d %>% 
+  left_join(data2)
+```
+
+
+```{r mapa1, echo=FALSE, fig.align='center', fig.asp=0.6, message=FALSE, warning=FALSE, out.width="150%", paged.print=TRUE}
+
+# MAPA contagios enero por departamento
+ggplot(peru_datos) +
+  geom_sf(aes(fill = n))+
+  labs(title = "Número total de contagiados por COVID en Enero - 2022",
+       caption = "Fuente: Elaboración propia"
+  )+
+  scale_fill_continuous(low="white",
+                        high="black" ,
+                        guide_legend(title = "Número de casos"))+
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank())
+```
+
+## Mapa porcentaje de infectados Covid
+Por lo tanto se incluye la variable poblacion por departamento en el análisis, siendo el ratio generado la división entre el número total de casos confirmados durante el mes de Enero y el número de personas que habitan dicho departamento, el ratio viene a ser interpretado como el porcentaje de personas que estan infectadas en determinado departamento, siendo por lo tanto, un ratio mayor(color cercano a negro) un indicador de mayor porcentaje de contagiados, en consecuencia, **los departamentos más cercanos al color negro estan en una peor situación sanitaria que aquellos con colores cercanos al blanco**.
+```{r mapa3, echo=FALSE, fig.asp=0.6, message=FALSE, warning=FALSE,paged.print=TRUE,out.width = "150%",fig.align='center'}
+#-------------------------------#
+# AGREGANDO POBLACIÓN A LA DATA #
+#-------------------------------#
+población<-as.data.frame( unique(data2$NOMBDEP))
+names(población)<-"NOMBDEP"
+población$personas<-c("426806","1180638","430736","1497438","668213","1453711","1129854","1357075","365317","760267","975182","1361467","2016771","1310785","10628470","1027559","173811","192740","271904","2047954","1237997","899648","370974","251521","589110")
+población$personas<-as.numeric( población$personas)
+
+peru_datos<-peru_datos %>% 
+  left_join(población)
+# ratio de numero de personas por departamento entre cuantas estan contagiadas
+peru_datos<-peru_datos %>% mutate(ratio=n/personas*100)
+
+#
+ggplot(peru_datos) +
+  geom_sf(aes(fill = ratio))+
+  labs(title = "Total de contagiados por COVID Enero - 2022",
+       caption = "Fuente: Elaboración propia",
+       subtitle="Ratio = Casos confirmados entre población total"
+       
+  )+
+  scale_fill_continuous(low="white",
+                        high="black" ,
+                        guide_legend(title = "Porcentaje infectados"))+
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank())
+
+```
+
+
