@@ -16,10 +16,12 @@ library(fpp2)
 library(sf)
 library(sp)
 #--------------------- DATA COVID DEL MINSA ---------------------#
-datacovid<-read.csv("C:\\Users\\LBarrios\\Downloads\\positivos_covid.csv", sep = ";")
+# datacovid<-read.csv("C:\\Users\\LBarrios\\Downloads\\positivos_covid.csv", sep = ";")
 # FORMATEANDO LA FECHA
-# datacovid<-read.csv(url("https://cloud.minsa.gob.pe/s/AC2adyLkHCKjmfm/download"), sep = ";")
-fallecidoscovid<-read.csv("C:\\Users\\LBarrios\\Downloads\\fallecidos_covid.csv",sep=";")
+datacovid<-read.csv(url("https://cloud.minsa.gob.pe/s/AC2adyLkHCKjmfm/download"), sep = ";")
+fallecidoscovid<-read.csv(url("https://cloud.minsa.gob.pe/s/xJ2LQ3QyRW38Pe5/download"), sep = ";")
+
+# fallecidoscovid<-read.csv("C:\\Users\\LBarrios\\Downloads\\fallecidos_covid.csv",sep=";")
 datacovid$FECHA_RESULTADO<-as.Date.character(datacovid$FECHA_RESULTADO,format = "%Y%m%d")
 fallecidoscovid$FECHA_FALLECIMIENTO<-as.Date.character(fallecidoscovid$FECHA_FALLECIMIENTO,format = "%Y%m%d")
 deathsbymonth<-fallecidoscovid %>% filter(DEPARTAMENTO=="LIMA") %>% group_by(FECHA_FALLECIMIENTO) %>%
