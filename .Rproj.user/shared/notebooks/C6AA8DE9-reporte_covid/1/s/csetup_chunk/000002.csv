@@ -1,9 +1,0 @@
-"0","datacovid<-read.csv(""https://cloud.minsa.gob.pe/s/AC2adyLkHCKjmfm/download"", sep = "";"")
-"
-"2","Warning in file(file, ""rt"") :"
-"2","
- "
-"2"," InternetOpenUrl failed: 'Se agotó el tiempo de espera para la operación'
-"
-"2","Error in file(file, ""rt"") : cannot open the connection
-"

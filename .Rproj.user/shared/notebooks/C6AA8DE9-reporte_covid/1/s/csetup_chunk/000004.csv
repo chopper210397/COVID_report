@@ -1,0 +1,50 @@
+"0","knitr::opts_chunk$set(echo = TRUE)"
+"0","library(writexl)"
+"0","library(RODBC)"
+"0","library(dplyr)"
+"2","
+Attaching package: ‘dplyr’
+
+"
+"2","The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+"
+"2","The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+"
+"0","library(tidyr)"
+"0","library(lubridate)"
+"2","
+Attaching package: ‘lubridate’
+
+"
+"2","The following objects are masked from ‘package:base’:
+
+    date, intersect, setdiff, union
+
+"
+"0","library(ggplot2)"
+"0","library(fpp2)"
+"2","Registered S3 method overwritten by 'quantmod':
+  method            from
+  as.zoo.data.frame zoo 
+"
+"2","[37m-- [1mAttaching packages[22m ----------------------------------------------------------------------------------------------------------------- fpp2 2.4 --[39m
+"
+"2","[37m[32mv[37m [34mforecast [37m 8.16     [32mv[37m [34mexpsmooth[37m 2.3 
+[32mv[37m [34mfma      [37m 2.4      [39m
+"
+"2","[37m[39m
+"
+"0","library(sf)"
+"2","Linking to GEOS 3.9.1, GDAL 3.2.1, PROJ 7.2.1; sf_use_s2() is TRUE
+"
+"0","library(sp)"
+"0","#--------------------- DATA COVID DEL MINSA ---------------------#"
+"0","# datacovid<-read.csv(""C:\\Users\\LBarrios\\Downloads\\positivos_covid.csv"", sep = "";"")"
+"0","# FORMATEANDO LA FECHA"
+"0","datacovid<-read.csv(url(""https://cloud.minsa.gob.pe/s/AC2adyLkHCKjmfm/download""), sep = "";"")"
