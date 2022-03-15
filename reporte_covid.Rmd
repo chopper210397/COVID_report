@@ -116,6 +116,9 @@ Por lo tanto se incluye la variable poblacion por departamento en el análisis, 
 #-------------------------------#
 población<-as.data.frame( unique(data2$NOMBDEP))
 names(población)<-"NOMBDEP"
+población<-población %>% filter(NOMBDEP !="")
+población<-población %>% filter(NOMBDEP !="CALLAO")
+
 población$personas<-c("426806","1180638","430736","1497438","668213","1453711","1129854","1357075","365317","760267","975182","1361467","2016771","1310785","10628470","1027559","173811","192740","271904","2047954","1237997","899648","370974","251521","589110")
 población$personas<-as.numeric( población$personas)
 

@@ -1,0 +1,7 @@
+"0","deathsbymonth %>%"
+"0","  ggplot(mapping = aes(x=FECHA_FALLECIMIENTO,y=n))+"
+"0","  geom_line(color=""black"") +"
+"0","  theme_minimal()+"
+"0","  labs(x="""",y=""Número de fallecimientos"","
+"0","       title = ""Número de fallecimientos por día en el departamento de Lima"","
+"0","       caption = ""Fuente: Elaboración propia"")"

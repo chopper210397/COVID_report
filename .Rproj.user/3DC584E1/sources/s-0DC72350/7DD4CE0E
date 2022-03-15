@@ -3,7 +3,7 @@
     "path": "C:/Users/LBarrios/Desktop/COVID_report/reporte_covid.Rmd",
     "project_path": "reporte_covid.Rmd",
     "type": "r_markdown",
-    "hash": "0",
+    "hash": "3370374075",
     "contents": "",
     "dirty": false,
     "created": 1643316511335.0,
@@ -12,15 +12,16 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "113,0",
-        "scrollLine": "110"
+        "cursorPosition": "145,0",
+        "scrollLine": "121",
+        "last_setup_crc32": "0DC72350da0b3e39"
     },
     "folds": "",
-    "lastKnownWriteTime": 1643316301,
+    "lastKnownWriteTime": 1647366926,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1643834788382,
+    "last_content_update": 1647366926155,
     "read_only": false,
     "read_only_alternatives": []
 }
